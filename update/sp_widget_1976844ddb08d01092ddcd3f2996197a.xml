@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {
+  /* widget controller */
+  var c = this;
+	
+	c.incrementFunction = function(){
+		c.data.counter++; //Demo client side update
+		c.server.update(); 
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>global_object</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Global Object</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+	data.message = 'Hello World';
+	
+	console.log('data ' + JSON.stringify(data));
+	console.log('options ' + JSON.stringify(options));
+	console.log('input ' + JSON.stringify(input));
+	
+	data.counter=0;
+	
+	if(input && input.counter){
+		data.message = 'Increment counter at Server script'; //Value doesnt change the first time the button is clicked
+		data.counter = input.counter + 2; //Demo server side update
+	}
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>nithin</sys_created_by>
+        <sys_created_on>2020-04-06 10:11:44</sys_created_on>
+        <sys_id>1976844ddb08d01092ddcd3f2996197a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Global Object</sys_name>
+        <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
+        <sys_update_name>sp_widget_1976844ddb08d01092ddcd3f2996197a</sys_update_name>
+        <sys_updated_by>nithin</sys_updated_by>
+        <sys_updated_on>2020-04-06 10:40:33</sys_updated_on>
+        <template><![CDATA[<div>
+<p>
+ data: {{data}} 
+ || Content of the object: {{data.message}} 
+ </p>
+  <p>
+    message: {{data.message}}
+  </p>
+  <p>
+    instance widget options: {{options}}
+  </p>
+  
+  <p>
+    options.option_1: {{options.option_1}}
+  </p>
+  
+  <p>
+    input: {{input}}
+  </p>
+  
+  <p>
+    data.counter: {{data.counter}}
+  </p>
+  
+  <button ng-click="c.incrementFunction()">
+    Increment Counter
+  </button>
+</div>]]></template>
+    </sp_widget>
+</record_update>
