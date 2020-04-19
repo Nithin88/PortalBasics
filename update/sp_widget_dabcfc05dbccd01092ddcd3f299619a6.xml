@@ -24,20 +24,42 @@
         <option_schema/>
         <public>false</public>
         <roles/>
-        <script><![CDATA[(function() {  /* populate the 'data' object */  /* e.g., data.table = $sp.getValue('table'); */})();]]></script>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+	data.title = options.title || 'My Incidents';
+	data.fields = options.fields || 'number, short_description, sys_created_on';
+	data.items = getRecentIncidents();
+	
+	function getRecentIncidents(){
+		var items = [];
+		var incidentGR = new GlideRecord('incident');
+		incidentGR.setLimit(5);
+		incidentGR.orderBy('sys_created_on');
+		incidentGR.query();
+		while(incidentGR.next()){
+			var obj = {};
+			$sp.getRecordElements(obj, incidentGR, data.fields);
+			items.push(obj);
+		}
+		return items;
+	}
+	
+})();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>nithin</sys_created_by>
         <sys_created_on>2020-04-06 14:08:50</sys_created_on>
         <sys_id>dabcfc05dbccd01092ddcd3f299619a6</sys_id>
-        <sys_mod_count>13</sys_mod_count>
+        <sys_mod_count>24</sys_mod_count>
         <sys_name>Create an Incident</sys_name>
         <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
         <sys_update_name>sp_widget_dabcfc05dbccd01092ddcd3f299619a6</sys_update_name>
         <sys_updated_by>nithin</sys_updated_by>
-        <sys_updated_on>2020-04-06 14:41:58</sys_updated_on>
+        <sys_updated_on>2020-04-07 12:19:14</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
   
   <div class="panel-heading">
@@ -70,7 +92,25 @@
       Submit
     </button>
   </div>
+</div>
   
-</div>]]></template>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        {{data.title}}
+      </h4>
+    </div>
+    
+    <div class="panel-body">
+      <ul class="list-group">
+                <li class="list-group-item" ng-repeat="item in data.items">
+                            {{item.number.display_value}} - 
+          <span class="text-muted">
+          <small> {{item.short_description.display_value}}</small>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>]]></template>
     </sp_widget>
 </record_update>
