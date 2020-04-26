@@ -4,6 +4,8 @@
         <client_script><![CDATA[function(spUtil) {
   /* widget controller */
   var c = this;
+	c.keyword='';
+	c.submitting = false;
 	
 	c.submit = function(){
 		if(c.data.newIncident.issue === '' || c.data.newIncident.urgency === ''){
@@ -11,13 +13,19 @@
 			return; // Stop executing the remaining code in this block
 		}
 		
+		c.submitting = true;
 		c.data.action = 'createIncident';
 		//c.server.update();
 		//Use then function available via Javascript promise
 		c.server.update().then(function(){
+			c.submitting = false;
 			spUtil.addInfoMessage(c.data.message);
 		});
 		
+	}
+	
+	c.change = function(){
+		console.log('Changed!');
 	}
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -65,7 +73,7 @@
 		var items = [];
 		var incidentGR = new GlideRecord('incident');
 		incidentGR.setLimit(5);
-		incidentGR.orderBy('sys_created_on');
+		incidentGR.orderByDesc('sys_created_on');
 		incidentGR.query();
 		while(incidentGR.next()){
 			var obj = {};
@@ -81,14 +89,14 @@
         <sys_created_by>nithin</sys_created_by>
         <sys_created_on>2020-04-06 14:08:50</sys_created_on>
         <sys_id>dabcfc05dbccd01092ddcd3f299619a6</sys_id>
-        <sys_mod_count>39</sys_mod_count>
+        <sys_mod_count>46</sys_mod_count>
         <sys_name>Create an Incident</sys_name>
         <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
         <sys_update_name>sp_widget_dabcfc05dbccd01092ddcd3f299619a6</sys_update_name>
         <sys_updated_by>nithin</sys_updated_by>
-        <sys_updated_on>2020-04-26 11:08:55</sys_updated_on>
+        <sys_updated_on>2020-04-26 12:44:28</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
   
   <div class="panel-heading">
@@ -112,18 +120,24 @@
         <label for="urgency">Urgency</label>
         <select id="urgency" 
                 class="form-control"
-                ng-model="data.newIncident.urgency">
+                ng-model="data.newIncident.urgency"
+                ng-change="c.change()">
          <option value="1">High</option>
           <option value="2">Medium</option>
           <option value="3">Low</option>
         </select>
       </div>
+      <p ng-if="c.data.newIncident.urgency === '1'">
+        Whoa! Are you sure you're <em>that</em> important ?
+      </p>
     </form>
   </div>
   
   <div class="panel-footer">
-    <button class="btn btn-success" ng-click="c.submit()">
-      Submit
+    <button class="btn btn-success" 
+            ng-click="c.submit()"
+            ng-disabled="c.submitting">
+      Submit<span ng-show="c.submitting">ting...</span>
     </button>
   </div>
 </div>
@@ -136,8 +150,14 @@
     </div>
     
     <div class="panel-body">
+      <div>
+        <input type="text"
+               class="form-control"
+               placeholder="Search for an incident"
+               ng-model="c.keyword"/>
+      </div>
       <ul class="list-group">
-                <li class="list-group-item" ng-repeat="item in data.items">
+                <li class="list-group-item" ng-repeat="item in data.items | filter: c.keyword">
                             {{item.number.display_value}} - 
           <span class="text-muted">
           <small> {{item.short_description.display_value}}</small>
