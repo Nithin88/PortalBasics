@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_ng_pro_sp_widget">
+    <m2m_sp_ng_pro_sp_widget action="INSERT_OR_UPDATE">
+        <sp_angular_provider display_value="urgencyIcon">9830f008dba0101092ddcd3f2996198e</sp_angular_provider>
+        <sp_widget display_value="Create an Incident">dabcfc05dbccd01092ddcd3f299619a6</sp_widget>
+        <sys_class_name>m2m_sp_ng_pro_sp_widget</sys_class_name>
+        <sys_created_by>nithin</sys_created_by>
+        <sys_created_on>2020-04-28 07:11:49</sys_created_on>
+        <sys_id>0c40b444dba0101092ddcd3f299619f7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>urgencyIcon.Create an Incident</sys_name>
+        <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
+        <sys_update_name>m2m_sp_ng_pro_sp_widget_0c40b444dba0101092ddcd3f299619f7</sys_update_name>
+        <sys_updated_by>nithin</sys_updated_by>
+        <sys_updated_on>2020-04-28 07:11:49</sys_updated_on>
+    </m2m_sp_ng_pro_sp_widget>
+</record_update>
