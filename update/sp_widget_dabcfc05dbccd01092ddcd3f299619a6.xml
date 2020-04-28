@@ -40,13 +40,14 @@
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
         <name>Create an Incident</name>
-        <option_schema/>
+        <option_schema>[{"name":"template","section":"other","default_value":"list-large.html","label":"Template","type":"string"}]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
 
+	data.template = options.template || 'list-default.html';
 	data.title = options.title || 'My Incidents';
 	data.fields = options.fields || 'number, short_description, sys_created_on';
 	data.items = getRecentIncidents();
@@ -89,14 +90,14 @@
         <sys_created_by>nithin</sys_created_by>
         <sys_created_on>2020-04-06 14:08:50</sys_created_on>
         <sys_id>dabcfc05dbccd01092ddcd3f299619a6</sys_id>
-        <sys_mod_count>46</sys_mod_count>
+        <sys_mod_count>50</sys_mod_count>
         <sys_name>Create an Incident</sys_name>
         <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
         <sys_update_name>sp_widget_dabcfc05dbccd01092ddcd3f299619a6</sys_update_name>
         <sys_updated_by>nithin</sys_updated_by>
-        <sys_updated_on>2020-04-26 12:44:28</sys_updated_on>
+        <sys_updated_on>2020-04-27 16:15:46</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
   
   <div class="panel-heading">
@@ -157,11 +158,9 @@
                ng-model="c.keyword"/>
       </div>
       <ul class="list-group">
-                <li class="list-group-item" ng-repeat="item in data.items | filter: c.keyword">
-                            {{item.number.display_value}} - 
-          <span class="text-muted">
-          <small> {{item.short_description.display_value}}</small>
-          </span>
+                <li class="list-group-item" 
+                    ng-repeat="item in data.items | filter: c.keyword"
+                    ng-include="data.template">
         </li>
       </ul>
       
