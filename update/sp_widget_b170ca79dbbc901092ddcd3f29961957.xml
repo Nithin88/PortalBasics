@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function(spUtil) {
+  /* widget controller */
+  var c = this;
+	
+	c.submit=function(){
+		if(c.data.newIncident.issue === '' || c.data.newIncident.urgency === ''){
+			spUtil.addErrorMessage('Issue and Urgency are mandatory');
+			return; // Stop executing the remaining code in this block
+		}
+		
+		console.log('Submit button is clicked');
+		c.data.action = 'createincident';
+		c.server.update();
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>incident</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>incident</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+	data.newIncident = {
+		issue: '',
+		urgency: '',
+		impact: ''
+	}
+	
+	if(input && input.action =='createincident'){
+		insertInc(input.newIncident);
+	}
+	
+	function insertInc(inc){
+		var incidentGr = new GlideRecord('incident');
+		incidentGr.initialize();
+		incidentGr.caller_id = gs.getUserID();
+		incidentGr.short_description = inc.issue;
+		incidentGr.urgency = inc.urgency;
+		incidentGr.impact = inc.impact;
+		incidentGr.insert();
+	}
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>nithin</sys_created_by>
+        <sys_created_on>2020-05-16 09:47:20</sys_created_on>
+        <sys_id>b170ca79dbbc901092ddcd3f29961957</sys_id>
+        <sys_mod_count>32</sys_mod_count>
+        <sys_name>incident</sys_name>
+        <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
+        <sys_update_name>sp_widget_b170ca79dbbc901092ddcd3f29961957</sys_update_name>
+        <sys_updated_by>nithin</sys_updated_by>
+        <sys_updated_on>2020-05-30 12:53:22</sys_updated_on>
+        <template><![CDATA[<div>
+<div class="panel-heading">
+  <h4 class="panel-title">
+    Submit an incident
+  </h4>
+  </div>
+  
+  <div class="panel-body">
+    <form>
+      <div class="form-group">
+        <label for="issue">Issue</label>
+        <input type="text" class="form-control" 
+               id="issue" 
+               placeholder="Wifi is not working"
+               ng-model="data.newIncident.issue">
+      </div>
+      
+      <div class="form-group">
+        <label for="urgency">Urgency</label>
+        <select id="urgency" class="form-control"
+                ng-model="data.newIncident.urgency">
+          <option value="none">--None--</option>
+          <option value="1">1 - High</option>
+          <option value="2">2 - Medium</option>
+          <option value="3">3 - Low</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="impact">Impact</label>
+        <select id="impact" class="form-control"
+                ng-model="data.newIncident.impact">
+          <option value="none">--None--</option>
+          <option value="1">1 - High</option>
+          <option value="2">2 - Medium</option>
+          <option value="3">3 - Low</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  
+  <div class="panel-footer" ng-click="c.submit()">
+    <button class="btn btn-success">
+      Submit
+    </button>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>
