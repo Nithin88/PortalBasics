@@ -3,43 +3,28 @@
         <category>custom</category>
         <client_script><![CDATA[function() {
 
-    /*
-    Reference artcile 
-    https://community.servicenow.com/community?id=community_blog&sys_id=461e226ddbd0dbc01dcaf3231f96198b
-    */
     /* widget controller */
     var c = this;
 
     // Define our hard-coded data
-    var data = [{
-        "category": "Hardware",
-        "value": 10
-    }, {
-        "category": "Software",
-        "value": 24
-    }, {
-        "category": "Inquiry",
-        "value": 14
-    }, {
-        "category": "Network",
-        "value": 34
-    }];
+    var data = c.data.categories;
 
     // Set the width of the chart along with the height of each bar
-    var width = 600,
-        barHeight = 20;
+    var width = c.options.width,
+        barHeight = c.options.bar_height,
+        leftMargin = c.options.left_margin;
 
     var chart = d3.select(".chart")
         .attr("width", width)
-        .attr("height", barHeight * data.length);
+        .attr("height", barHeight * data.length + 50);
 
-    // Create a function to automatically scale the bars correctly
+    // Set the domain and range of the chart
     var x = d3.scaleLinear()
-        .range([0, width])
+        .range([leftMargin, width])
         .domain([0, d3.max(data, function(d) {
             return d.value;
         })]);
-
+	
     // Add a g container for each row from our data
     var bar = chart.selectAll("g")
         .data(data)
@@ -51,50 +36,55 @@
     // Add a rectangle element with the width based off of the value from that row of data
     bar.append("rect")
         .attr("width", function(d) {
-            return x(d.value);
+            return x(d.value) - leftMargin;
         })
-        .attr("height", barHeight - 1);
+        .attr("height", barHeight - 1)
+        .attr("x", leftMargin);
 
-    // Add text elements to serve as labels of our categories and values
+    // Add text elements to serve as labels of our categories
     bar.append("text")
-        .attr("x", 3)
+        .attr("x", leftMargin - 5)
         .attr("y", barHeight / 2)
+        .attr("width", leftMargin)
         .attr("dy", ".35em")
+        .style("fill", "black")
+        .style("text-anchor", "end")
         .text(function(d) {
             return d.category;
         });
-
-    bar.append("text")
-        .attr("x", function(d) {
-            return x(d.value) - 15;
-        })
-        .attr("y", barHeight / 2)
-        .attr("dy", ".35em")
-        .text(function(d) {
-            return d.value;
-        });
+	
+    // Create the x-axis and append it to the bottom of the chart
+    var xAxis = d3.axisBottom().scale(x);
+	
+    chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (barHeight * data.length) + ")")
+        .attr("x", leftMargin)
+        .call(xAxis);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>.chart rect {
-
-  fill: steelblue;
-
-}
-
-.chart text {
-
-  fill: white;
-
-  font: 10px sans-serif;
-
-  text-anchor: end;
-
-}
-
-.centered-chart {
-
-  text-align: center;
-
+        <css>.chart rect {&#13;
+  fill: steelblue;&#13;
+}&#13;
+&#13;
+.chart text {&#13;
+  font: 10px sans-serif;&#13;
+}&#13;
+&#13;
+.centered-chart {&#13;
+  text-align: center;&#13;
+}&#13;
+&#13;
+.axis text {&#13;
+  font: 10px sans-serif;&#13;
+}&#13;
+&#13;
+.axis path,&#13;
+&#13;
+.axis line {&#13;
+  fill: none;&#13;
+  stroke: #000;&#13;
+  shape-rendering: crispEdges;&#13;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -106,23 +96,48 @@
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
         <name>D3 Bar Chart</name>
-        <option_schema/>
+        <option_schema>[{"hint":"Width of chart","name":"width","section":"other","default_value":"800","label":"Width","type":"integer"},{"hint":"Height of each row","name":"bar_height","section":"other","default_value":"25","label":"Bar Height","type":"integer"},{"hint":"Width of left margin window","name":"left_margin","section":"other","default_value":"90","label":"Left Margin","type":"integer"}]</option_schema>
         <public>false</public>
         <roles/>
-        <script><![CDATA[(function() {  /* populate the 'data' object */  /* e.g., data.table = $sp.getValue('table'); */})();]]></script>
+        <script><![CDATA[(function() {
+
+    /* populate the 'data' object */
+
+    // Set default options
+    options.width = options.width || 600;
+    options.bar_height = options.bar_height || 20;
+    options.left_margin = options.left_margin || 100;
+
+    // Create an array of objects containing the categories along with
+    // the number of objects in each
+    data.categories = [];
+
+    var count = new GlideAggregate('incident');
+    count.addQuery('active', 'true');
+    count.addAggregate('COUNT', 'category');
+    count.query();
+    while (count.next()) {
+        var category = count.category.getDisplayValue();
+        var categoryCount = count.getAggregate('COUNT', 'category') * 1.0;
+        data.categories.push({
+            "category": category,
+            "value": categoryCount
+        });
+    }
+})();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>nithin</sys_created_by>
         <sys_created_on>2020-06-04 05:19:45</sys_created_on>
         <sys_id>9769befbdb4d501092ddcd3f29961967</sys_id>
-        <sys_mod_count>10</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>D3 Bar Chart</sys_name>
         <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
         <sys_update_name>sp_widget_9769befbdb4d501092ddcd3f29961967</sys_update_name>
         <sys_updated_by>nithin</sys_updated_by>
-        <sys_updated_on>2020-06-04 05:46:45</sys_updated_on>
+        <sys_updated_on>2020-06-04 10:32:06</sys_updated_on>
         <template><![CDATA[<div>
 	<div class="centered-chart">
 		<h1>D3 Bar Chart</h1>
