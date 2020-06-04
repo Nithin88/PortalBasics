@@ -1,90 +1,226 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function() {
+        <client_script><![CDATA[function($scope) {
 
-    /* widget controller */
-    var c = this;
+  /* widget controller */
 
-    // Define our hard-coded data
-    var data = c.data.categories;
+  var c = this;
 
-    // Set the width of the chart along with the height of each bar
-    var width = c.options.width,
-        barHeight = c.options.bar_height,
-        leftMargin = c.options.left_margin;
+  // Grab our category counts from our Server Script
 
-    var chart = d3.select(".chart")
-        .attr("width", width)
-        .attr("height", barHeight * data.length + 50);
+  $scope.activeData = c.data.active;
 
-    // Set the domain and range of the chart
-    var x = d3.scaleLinear()
-        .range([leftMargin, width])
-        .domain([0, d3.max(data, function(d) {
-            return d.value;
-        })]);
-	
-    // Add a g container for each row from our data
-    var bar = chart.selectAll("g")
-        .data(data)
-        .enter().append("g")
-        .attr("transform", function(d, i) {
-            return "translate(0," + i * barHeight + ")";
-        });
+  $scope.inactiveData = c.data.inactive;
 
-    // Add a rectangle element with the width based off of the value from that row of data
-    bar.append("rect")
-        .attr("width", function(d) {
-            return x(d.value) - leftMargin;
-        })
-        .attr("height", barHeight - 1)
-        .attr("x", leftMargin);
+  $scope.allData = c.data.all;
 
-    // Add text elements to serve as labels of our categories
-    bar.append("text")
-        .attr("x", leftMargin - 5)
-        .attr("y", barHeight / 2)
-        .attr("width", leftMargin)
-        .attr("dy", ".35em")
-        .style("fill", "black")
-        .style("text-anchor", "end")
-        .text(function(d) {
-            return d.category;
-        });
-	
-    // Create the x-axis and append it to the bottom of the chart
-    var xAxis = d3.axisBottom().scale(x);
-	
-    chart.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (barHeight * data.length) + ")")
-        .attr("x", leftMargin)
-        .call(xAxis);
+  // Set the width of the chart along with the height of each bar
+
+  var width = c.options.width,
+
+  barHeight = c.options.bar_height,
+
+  leftMargin = c.options.left_margin;
+
+  $scope.updateBars = function(data) {
+
+            // Set the dimensions of our chart
+
+            var chart = d3.select(".chart").attr("width", width)
+
+            .attr("height", barHeight * data.length + 50);
+
+            // Remove existing axis and tooltip
+
+            d3.select(".x.axis").remove();
+
+            chart.select(".counter").remove();
+
+            // Add a placeholder text element for our tooltip
+
+            var counter = chart.append("text").attr("class", "counter")
+
+            .attr("y", 10)
+
+            .attr("x", width-20);
+
+            // Set the domain and range of the chart
+
+            var x = d3.scaleLinear()
+
+            .range([leftMargin, width])
+
+            .domain([0, d3.max(data, function(d) { return d.value; })]);
+
+            // Bind our new data to our g elements
+
+            var bar = chart.selectAll("g").data(data, function(d) { return d.category;});
+
+            // Remove existing bars that aren't in the new data
+
+            bar.exit().remove();
+
+            // Create new g elements for new categories in our new data
+
+            var barEnter = bar.enter().append("g")
+
+            .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
+            // Enter new rect elements
+
+            barEnter.append("rect")
+
+            .on("mouseover", highlightBar)
+
+            .on("mouseout", unhighlightBar)
+
+            .attr("class", "chart-bar")
+
+            .attr("height", barHeight - 1)
+
+            .attr("x", leftMargin)
+
+            .transition().duration(750)
+
+            .attr("width", function(d) { return x(d.value) - leftMargin; });
+
+            // Enter new text labels
+
+            barEnter.append("text")
+
+            .attr("x", leftMargin - 5)
+
+            .attr("y", barHeight / 2)
+
+            .attr("width", leftMargin)
+
+            .attr("dy", ".35em")
+
+            .style("fill", "black")
+
+            .style("text-anchor", "end")
+
+            .transition()
+
+            .delay(750)
+
+            .text(function(d) { return d.category; });
+
+            // Update existing bars
+
+            bar.transition().duration(750)
+
+            .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
+            bar.selectAll('rect')
+
+            .on("mouseover", highlightBar)
+
+            .on("mouseout", unhighlightBar)
+
+            .data(data, function(d) { return d.category;})
+
+            .transition().duration(750)
+
+            .attr("width", function(d) { return x(d.value) - leftMargin; });
+
+            // Create the x-axis and append it to the bottom of the chart
+
+            var xAxis = d3.axisBottom().scale(x);
+
+            chart.append("g")
+
+            .attr("class", "x axis")
+
+            .attr("transform", "translate(0," + (barHeight * data.length) + ")")
+
+            .attr("x", leftMargin)
+
+            .transition()
+
+            .delay(750)
+
+            .call(xAxis);
+
+            // Define functions for our hover functionality
+
+            function highlightBar(d,i) {
+
+                      d3.select(this).style("fill", "#b0c4de");
+
+                      counter.text(d.category + ' ' + d.value);
+
+            }
+
+            function unhighlightBar(d,i) {
+
+                      d3.select(this).style("fill", "#4682b4");
+
+                      counter.text("");
+
+            }
+
+  }
+
+  $scope.updateBars($scope.activeData);
+
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>.chart rect {&#13;
-  fill: steelblue;&#13;
-}&#13;
-&#13;
-.chart text {&#13;
-  font: 10px sans-serif;&#13;
-}&#13;
-&#13;
-.centered-chart {&#13;
-  text-align: center;&#13;
-}&#13;
-&#13;
-.axis text {&#13;
-  font: 10px sans-serif;&#13;
-}&#13;
-&#13;
-.axis path,&#13;
-&#13;
-.axis line {&#13;
-  fill: none;&#13;
-  stroke: #000;&#13;
-  shape-rendering: crispEdges;&#13;
+        <css>.btn {
+
+        background-color: white;
+
+        border: 1px solid gray !important;
+
+}
+
+.chart rect {
+
+        fill: #4682b4;
+
+}
+
+.chart-container {
+
+        height: 200px;
+
+}
+
+.chart text {
+
+        font: 10px sans-serif;
+
+}
+
+.centered-chart {
+
+        text-align: center;
+
+}
+
+.counter {
+
+        text-anchor: end;
+
+}
+
+.axis text {
+
+font: 10px sans-serif;
+
+}
+
+.axis path,
+
+.axis line {
+
+        fill: none;
+
+        stroke: #000;
+
+        shape-rendering: crispEdges;
+
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -100,49 +236,118 @@
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
+	
+	/*
+	Reference article
+	https://community.servicenow.com/community?id=community_blog&sys_id=0e6dea29dbd0dbc01dcaf3231f96199d
+	*/
 
-    /* populate the 'data' object */
+            /* populate the 'data' object */
 
-    // Set default options
-    options.width = options.width || 600;
-    options.bar_height = options.bar_height || 20;
-    options.left_margin = options.left_margin || 100;
+            options.width = options.width || 600;
 
-    // Create an array of objects containing the categories along with
-    // the number of objects in each
-    data.categories = [];
+            options.bar_height = options.bar_height || 20;
 
-    var count = new GlideAggregate('incident');
-    count.addQuery('active', 'true');
-    count.addAggregate('COUNT', 'category');
-    count.query();
-    while (count.next()) {
-        var category = count.category.getDisplayValue();
-        var categoryCount = count.getAggregate('COUNT', 'category') * 1.0;
-        data.categories.push({
-            "category": category,
-            "value": categoryCount
-        });
-    }
+            options.left_margin = options.left_margin || 100;
+
+            data.active = [];
+
+            data.inactive = [];
+
+            data.all = [];
+
+            // Get count of active incidents
+
+            var count = new GlideAggregate('incident');
+
+            count.addQuery('active', 'true');
+
+            count.addAggregate('COUNT', 'category');
+
+            count.query();
+
+            while (count.next()) {
+
+                      var category = count.category.getDisplayValue();
+
+                      var categoryCount = count.getAggregate('COUNT', 'category');
+
+                      data.active.push({category: category, "value": categoryCount});
+
+            }
+
+            // Get count of inactive incidents
+
+            var inactiveCount = new GlideAggregate('incident');
+
+            inactiveCount.addQuery('active', 'false');
+
+            inactiveCount.addAggregate('COUNT', 'category');
+
+            inactiveCount.query();
+
+            while (inactiveCount.next()) {
+
+                      var category = inactiveCount.category.getDisplayValue();
+
+                      var categoryCount = inactiveCount.getAggregate('COUNT', 'category');
+
+                      data.inactive.push({category: category, "value": categoryCount});
+
+            }
+
+            // Get count of all incidents
+
+            var allCount = new GlideAggregate('incident');
+
+            allCount.addAggregate('COUNT', 'category');
+
+            allCount.query();
+
+            while (allCount.next()) {
+
+                      var category = allCount.category.getDisplayValue();
+
+                      var categoryCount = allCount.getAggregate('COUNT', 'category');
+
+                      data.all.push({category: category, "value": categoryCount});
+
+            }
+
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>nithin</sys_created_by>
         <sys_created_on>2020-06-04 05:19:45</sys_created_on>
         <sys_id>9769befbdb4d501092ddcd3f29961967</sys_id>
-        <sys_mod_count>15</sys_mod_count>
+        <sys_mod_count>17</sys_mod_count>
         <sys_name>D3 Bar Chart</sys_name>
         <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
         <sys_update_name>sp_widget_9769befbdb4d501092ddcd3f29961967</sys_update_name>
         <sys_updated_by>nithin</sys_updated_by>
-        <sys_updated_on>2020-06-04 10:32:06</sys_updated_on>
-        <template><![CDATA[<div>
-	<div class="centered-chart">
-		<h1>D3 Bar Chart</h1>
-		<svg class="chart"></svg>
-	</div>
+        <sys_updated_on>2020-06-04 11:45:38</sys_updated_on>
+        <template><![CDATA[<div class="centered-chart row">
+
+        <h1>D3 Bar Chart</h1>
+
+        <div class="chart-container">
+
+                  <svg class="chart"></svg>
+
+        </div>
+
+        <div class="button-container">
+
+                  <button class="btn" ng-click="updateBars(activeData)">Active</button>
+
+                  <button class="btn" ng-click="updateBars(inactiveData)">Inactive</button>
+
+                  <button class="btn" ng-click="updateBars(allData)">All</button>
+
+        </div>
+
 </div>]]></template>
     </sp_widget>
 </record_update>
