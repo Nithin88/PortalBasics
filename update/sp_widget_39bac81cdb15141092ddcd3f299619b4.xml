@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {
+  /* widget controller */
+  var c = this;
+
+    var chart1 = new Highcharts.Chart({  
+  chart: {  
+      renderTo: 'custom_report',  
+      type: 'column'  
+  },  
+  title: {  
+      text: null  
+  },  
+  xAxis: {  
+      categories: ['(Empty)', 'Solana Beach CA', 'New York NY', 'Atlanta GA', 'San Diego CA', 'Hamburg', 'Johannesburg', 'Raleigh NC', 'Salem OR', 'Salt Lake City', 'San Diego'],  
+      title: {  
+          text: null  
+      },  
+      labels: {  
+          rotation: -45  
+      }  
+  },  
+  yAxis: {  
+      min: 0,  
+      title: {  
+          text: null  
+      }  
+  },  
+  series: [{
+        'name': 'Open',
+        'legendIndex': 0,
+        'data': [5,1,1,2,2,1,1,2,5,4,5]
+    },
+    {
+        'name': 'Resolved',
+        'legendIndex': 1,
+        'data': [0,0,0,0,0,0,0,0,0,0,0]            
+    }]  
+ });  
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>highcharts</id>
+        <internal>false</internal>
+        <link/>
+        <name>HighCharts</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {  /* populate the 'data' object */  /* e.g., data.table = $sp.getValue('table'); */})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>nithin</sys_created_by>
+        <sys_created_on>2020-06-05 05:53:23</sys_created_on>
+        <sys_id>39bac81cdb15141092ddcd3f299619b4</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>HighCharts</sys_name>
+        <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
+        <sys_update_name>sp_widget_39bac81cdb15141092ddcd3f299619b4</sys_update_name>
+        <sys_updated_by>nithin</sys_updated_by>
+        <sys_updated_on>2020-06-07 15:01:10</sys_updated_on>
+        <template><![CDATA[<div>
+<div id="custom_report"></div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

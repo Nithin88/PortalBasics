@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_js_include">
+    <sp_js_include action="INSERT_OR_UPDATE">
+        <display_name>NHighCharts</display_name>
+        <source>local</source>
+        <sys_class_name>sp_js_include</sys_class_name>
+        <sys_created_by>nithin</sys_created_by>
+        <sys_created_on>2020-06-07 14:59:16</sys_created_on>
+        <sys_id>b0ca98c1db51101092ddcd3f2996195f</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>NHighCharts</sys_name>
+        <sys_package display_value="Service Portal" source="x_171481_sp">e6a24885dbc4d01092ddcd3f299619ee</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal">e6a24885dbc4d01092ddcd3f299619ee</sys_scope>
+        <sys_ui_script display_value="NHighCharts">60d9d841db51101092ddcd3f299619b9</sys_ui_script>
+        <sys_update_name>sp_js_include_b0ca98c1db51101092ddcd3f2996195f</sys_update_name>
+        <sys_updated_by>nithin</sys_updated_by>
+        <sys_updated_on>2020-06-07 14:59:34</sys_updated_on>
+        <url/>
+    </sp_js_include>
+</record_update>
